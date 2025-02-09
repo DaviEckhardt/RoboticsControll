@@ -56,5 +56,12 @@ dependencies {
     androidTestImplementation(libs.androidx.ui.test.junit4)
     debugImplementation(libs.androidx.ui.tooling)
     debugImplementation(libs.androidx.ui.test.manifest)
-    implementation("io.github.controlwear:virtualjoystick:1.1.8")
+    implementation("io.github.controlwear:virtualjoystick:1.10.1")
+}
+
+repositories {
+    google()
+    mavenCentral()
+    jcenter()
+    maven { url "https://jitpack.io" }
 }
