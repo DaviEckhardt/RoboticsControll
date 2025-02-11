@@ -50,7 +50,8 @@ class MainActivity : Activity() {
 
         if (device != null) {
             try {
-                val uuid = UUID.fromString("00001101-0000-1000-8000-00805F9B34FB") // UUID padrão Bluetooth SPP
+                val uuid =
+                    UUID.fromString("00001101-0000-1000-8000-00805F9B34FB") // UUID padrão Bluetooth SPP
                 bluetoothSocket = device.createRfcommSocketToServiceRecord(uuid)
                 bluetoothSocket?.connect()
                 outputStream = bluetoothSocket?.outputStream
