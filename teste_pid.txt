@@ -29,7 +29,7 @@ void Mover::PID_CalculateV_W(float alpha, float distance,
     static float lastError_lin = 0;
     const float maxIntegral_lin = 20;
 
-    float error_lin = distance; // Pode ser normalizado se quiser
+    float error_lin = distance; 
     float p_lin = Kp_lin * error_lin;
     integral_lin += error_lin * dt;
     integral_lin = std::max(-maxIntegral_lin, std::min(maxIntegral_lin, integral_lin));
@@ -39,13 +39,11 @@ void Mover::PID_CalculateV_W(float alpha, float distance,
 
     v = p_lin + i_lin + d_lin;
 
-    // Opcional: reduzir v se desalinhado
     if (fabs(error_ang) > 0.5) {  // ~45 graus de erro
         v *= cos(error_ang * M_PI / 2);
     }
 
-    // Saturação de v
-    const float vMax = 1.5;  // metros por segundo, exemplo
+    const float vMax = 1.5;  
     v = std::max(-vMax, std::min(vMax, v));
 
     if(direction){
