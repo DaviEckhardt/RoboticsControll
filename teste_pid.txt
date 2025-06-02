@@ -1,0 +1,59 @@
+void Mover::PID_CalculateV_W(float alpha, float distance, 
+                              float Kp_ang, float Ki_ang, float Kd_ang,
+                              float Kp_lin, float Ki_lin, float Kd_lin,
+                              bool direction) 
+{
+    // PID Angular
+    static float integral_ang = 0;
+    static float lastError_ang = 0;
+    const float maxIntegral_ang = 8;
+    const float dt = 0.017;
+
+    float error_ang = alpha / 90;
+    if(direction){
+        error_ang = ajustaAngulo(180 - alpha) / 90;
+    }
+
+    float p_ang = Kp_ang * error_ang;
+    integral_ang += error_ang * dt;
+    integral_ang = std::max(-maxIntegral_ang, std::min(maxIntegral_ang, integral_ang));
+    float i_ang = Ki_ang * integral_ang;
+    float d_ang = Kd_ang * (error_ang - lastError_ang) / dt;
+    lastError_ang = error_ang;
+
+    w = p_ang + i_ang + d_ang;
+    w = std::max(-15.0f, std::min(15.0f, w));
+
+    // PID Linear
+    static float integral_lin = 0;
+    static float lastError_lin = 0;
+    const float maxIntegral_lin = 20;
+
+    float error_lin = distance; // Pode ser normalizado se quiser
+    float p_lin = Kp_lin * error_lin;
+    integral_lin += error_lin * dt;
+    integral_lin = std::max(-maxIntegral_lin, std::min(maxIntegral_lin, integral_lin));
+    float i_lin = Ki_lin * integral_lin;
+    float d_lin = Kd_lin * (error_lin - lastError_lin) / dt;
+    lastError_lin = error_lin;
+
+    v = p_lin + i_lin + d_lin;
+
+    // Opcional: reduzir v se desalinhado
+    if (fabs(error_ang) > 0.5) {  // ~45 graus de erro
+        v *= cos(error_ang * M_PI / 2);
+    }
+
+    // Saturação de v
+    const float vMax = 1.5;  // metros por segundo, exemplo
+    v = std::max(-vMax, std::min(vMax, v));
+
+    if(direction){
+        v = -fabs(v);
+    } else {
+        v = fabs(v);
+    }
+
+    cout << "Erro angular: " << error_ang << " | w: " << w << endl;
+    cout << "Erro linear: " << error_lin << " | v: " << v << endl;
+}
